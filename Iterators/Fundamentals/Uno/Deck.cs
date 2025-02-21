@@ -1,0 +1,63 @@
+using System.Collections;
+
+namespace Iterators.Fundamentals.Uno;
+
+public class Deck : IEnumerable<Card>
+{
+    private List<Card> _cards = new List<Card>();
+
+    public Deck()
+    {
+        foreach (Color c in Enum.GetValues(typeof(Color)))
+        {
+            if (c == Color.Special)
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    _cards.Add(new Card(Color.Special, Rank.Joker));
+                    _cards.Add(new Card(Color.Special, Rank.Plus4));
+                }
+                continue;
+            }
+            foreach (Rank r in Enum.GetValues(typeof(Rank)))
+            {
+                if (r == Rank.Joker)
+                    break;
+                if (r != Rank.Zero)
+                    _cards.Add(new Card(c, r));
+                _cards.Add(new Card(c, r));
+            }
+        }
+    }
+
+    public void UpdateDeck(int drawnCards)
+    {
+        while (drawnCards > 0)
+        {
+            _cards.RemoveAt(0);
+            drawnCards--;
+        }
+    }
+
+    public IEnumerator<Card> GetEnumerator()
+    {
+        foreach (Card c in _cards)
+        {
+            yield return c;
+        }
+    }
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
+
+    public Card GetFirst()
+    {
+        Card c = _cards[0];
+        _cards.RemoveAt(0);
+        return c;
+    }
+    
+    public bool IsEmpty() => _cards.Count == 0;
+}
