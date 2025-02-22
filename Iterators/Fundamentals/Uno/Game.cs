@@ -12,6 +12,7 @@ public class Game
         deck = new Deck();
         players = new List<Player>();
         nbOfPlus = 0;
+        deck.Shuffle();
     }
     
     public void Eat(int n)
@@ -41,7 +42,7 @@ public class Game
         for (int i = 0; i < players.Count; i++)
         {
             if (players[i] == who)
-                return (i - 1) % players.Count;
+                return i == 0 ? players.Count - 1 : i - 1;
         }
         return -1;
     }
@@ -101,8 +102,9 @@ public class Game
         {
             foreach (Player player in players)
             {
-                Console.WriteLine(player + " will play, current card = " + current);
+                Console.Write("current card = " + current + "  \t");
                 n = player.Play();
+                Console.WriteLine(player + " he drew " + n + " cards and played " + current);
                 if (n == -400)
                     throw new ArgumentException();
                 if (n == -1)
@@ -145,12 +147,5 @@ public class Game
         }
         if (deck.IsEmpty() && !finished)
             Console.WriteLine("This game did not end.");
-        /*int i = 0;
-        foreach (Card card in deck)
-        {
-            i++;
-            Console.WriteLine(card);
-        }
-        Console.WriteLine(i);
-  */}
+    }
 }

@@ -68,6 +68,11 @@ public class Deck : IEnumerable<Card>
 
     public void Shuffle()
     {
-        
+        Random rd = new Random(42);
+        for (int i = 0; i < _cards.Count; i++)
+        {
+            int otherPos = rd.Next(_cards.Count);
+            (_cards[i], _cards[otherPos]) = (_cards[otherPos], _cards[i]);
+        }
     }
 }
