@@ -52,12 +52,22 @@ public class Deck : IEnumerable<Card>
         return GetEnumerator();
     }
 
-    public Card GetFirst()
+    public Card? GetFirst()
     {
-        Card c = _cards[0];
-        _cards.RemoveAt(0);
+        int i = 0;
+        while (i < _cards.Count && (_cards[i].Rank == Rank.Plus2 || _cards[i].Color == Color.Special || _cards[i].Rank == Rank.Invert || _cards[i].Rank == Rank.Block))
+            i++;
+        if (i == _cards.Count)
+            return null;
+        Card c = _cards[i];
+        _cards.RemoveAt(i);
         return c;
     }
     
     public bool IsEmpty() => _cards.Count == 0;
+
+    public void Shuffle()
+    {
+        
+    }
 }

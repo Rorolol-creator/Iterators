@@ -4,18 +4,8 @@ using Iterators.Fundamentals;
 using Iterators.Fundamentals.Uno;
 
 Console.WriteLine("Hello, World!");
-Deck deck = new Deck();
-int i = 0;
-foreach (Card c in deck)
-{
-    i++;
-    Console.WriteLine(c.ToString());
-}
-Console.WriteLine(i);
-i = 0;
-foreach (Card c in deck)
-{
-    i++;
-    Console.WriteLine(c.ToString());
-}
-Console.WriteLine(i);
+Game g = new Game();
+g.AddPlayer("Rorolol");
+g.AddPlayer("TrollTrollTortue");
+g.AddPlayer("Loki");
+g.Play();
