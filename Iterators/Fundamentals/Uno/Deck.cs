@@ -75,4 +75,6 @@ public class Deck : IEnumerable<Card>
             (_cards[i], _cards[otherPos]) = (_cards[otherPos], _cards[i]);
         }
     }
+    
+    public int NbofCards => _cards.Count;
 }
