@@ -104,9 +104,10 @@ public class Game
             {
                 Console.Write("current card = " + current + "  \t");
                 n = player.Play();
-                Console.WriteLine(player + " he drew " + n + " cards and played " + current);
+                Console.Write(player.GetName() + "'s turn, he has : " + player.GetCards());
+                Console.WriteLine(player + " he drew " + n + " cards and played " + current + "\n");
                 if (n == -400)
-                    throw new ArgumentException();
+                    throw new ArgumentException(); //ahah -400 cards, funny right
                 if (n == -1)
                 {
                     if (current.Rank == Rank.Invert)

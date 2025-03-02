@@ -111,12 +111,14 @@ public class Player
             _cards.Remove(_game.current);
             return i;
         }
-        
+
+        Card c = _cards[0];
         foreach (Card card in _cards)
         {
             if (card.Color == Color.Special)
             {
                 _game.current = card;
+                c = card;
                 played = true;
                 _game.current.Color = MaxCol();
                 break;
@@ -124,7 +126,7 @@ public class Player
         }
         if (played)
         {
-            _cards.Remove(_game.current);
+            _cards.Remove(c);
             return i;
         }
         return -1;
@@ -205,5 +207,20 @@ public class Player
         if (Won())
             return name + " won the game !";
         return name + " has " + _cards.Count + " cards in his hand.";
+    }
+
+    public string GetCards()
+    {
+        string cards = "\n";
+        foreach (Card card in _cards)
+        {
+            cards += "\t- " + card + "\n";
+        }
+        return cards;
+    }
+
+    public string GetName()
+    {
+        return name;
     }
 }
