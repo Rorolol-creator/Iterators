@@ -4,7 +4,7 @@ public class GarbageCollector
 {
     private static GarbageCollector? _instance;
     
-    public static GarbageCollector Instance(int maxSize) => _instance ??= new GarbageCollector(new MemoryHeap(maxSize));
+    public static GarbageCollector Instance(uint maxSize = 0) => _instance ??= new GarbageCollector(new MemoryHeap(maxSize));
 
     public MemoryHeap Heap { get; }
     public GarbageCollector(MemoryHeap heap)

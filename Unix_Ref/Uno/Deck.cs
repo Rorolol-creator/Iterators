@@ -4,7 +4,7 @@ namespace Unix_Ref.Uno;
 
 public class Deck : IEnumerable<Card>
 {
-    private List<Card> _cards = new List<Card>();
+    public readonly List<Card> Cards = new();
 
     public Deck()
     {
@@ -14,8 +14,8 @@ public class Deck : IEnumerable<Card>
             {
                 for (int i = 0; i < 4; i++)
                 {
-                    _cards.Add(new Card(Color.Special, Rank.Joker));
-                    _cards.Add(new Card(Color.Special, Rank.Plus4));
+                    Cards.Add(new Card(Color.Special, Rank.Joker));
+                    Cards.Add(new Card(Color.Special, Rank.Plus4));
                 }
                 continue;
             }
@@ -24,24 +24,24 @@ public class Deck : IEnumerable<Card>
                 if (r == Rank.Joker)
                     break;
                 if (r != Rank.Zero)
-                    _cards.Add(new Card(c, r));
-                _cards.Add(new Card(c, r));
+                    Cards.Add(new Card(c, r));
+                Cards.Add(new Card(c, r));
             }
         }
     }
 
-    public void UpdateDeck(int drawnCards)
+    public virtual void UpdateDeck(int drawnCards)
     {
         while (drawnCards > 0)
         {
-            _cards.RemoveAt(0);
+            Cards.RemoveAt(0);
             drawnCards--;
         }
     }
 
     public IEnumerator<Card> GetEnumerator()
     {
-        foreach (Card c in _cards)
+        foreach (Card c in Cards)
         {
             yield return c;
         }
@@ -52,29 +52,29 @@ public class Deck : IEnumerable<Card>
         return GetEnumerator();
     }
 
-    public Card? GetFirst()
+    public virtual Card? GetFirst()
     {
         int i = 0;
-        while (i < _cards.Count && (_cards[i].Rank == Rank.Plus2 || _cards[i].Color == Color.Special || _cards[i].Rank == Rank.Invert || _cards[i].Rank == Rank.Block))
+        while (i < Cards.Count && (Cards[i].Rank == Rank.Plus2 || Cards[i].Color == Color.Special || Cards[i].Rank == Rank.Invert || Cards[i].Rank == Rank.Block))
             i++;
-        if (i == _cards.Count)
+        if (i == Cards.Count)
             return null;
-        Card c = _cards[i];
-        _cards.RemoveAt(i);
+        Card c = Cards[i];
+        Cards.RemoveAt(i);
         return c;
     }
     
-    public bool IsEmpty() => _cards.Count == 0;
+    public bool IsEmpty() => Cards.Count == 0;
 
     public void Shuffle()
     {
         Random rd = new Random(42);
-        for (int i = 0; i < _cards.Count; i++)
+        for (int i = 0; i < Cards.Count; i++)
         {
-            int otherPos = rd.Next(_cards.Count);
-            (_cards[i], _cards[otherPos]) = (_cards[otherPos], _cards[i]);
+            int otherPos = rd.Next(Cards.Count);
+            (Cards[i], Cards[otherPos]) = (Cards[otherPos], Cards[i]);
         }
     }
     
-    public int NbofCards => _cards.Count;
+    public int NbofCards => Cards.Count;
 }

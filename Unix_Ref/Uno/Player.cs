@@ -2,19 +2,19 @@ namespace Unix_Ref.Uno;
 
 public class Player
 {
-    private string _name;
-    private List<Card> _cards;
-    private Game _game;
+    protected string Name;
+    public readonly List<Card> Cards;
+    protected Game Game;
 
     public Player(Game game, string name)
     {
-        _name = name;
-        _cards = new List<Card>();
-        _game = game;
+        Name = name;
+        Cards = new List<Card>();
+        Game = game;
         int i = 0;
         foreach (Card card in game.Deck)
         {
-            _cards.Add(card);
+            Cards.Add(card);
             i++;
             if (i == 7)
                 break;
@@ -23,7 +23,7 @@ public class Player
 
     public static bool operator==(Player player, Player other)
     {
-        return player._name == other._name && player._game == other._game;
+        return player.Name == other.Name && player.Game == other.Game;
     }
 
     public static bool operator !=(Player player, Player other)
@@ -33,13 +33,13 @@ public class Player
 
     public bool Won()
     {
-        return _cards.Count == 0;
+        return Cards.Count == 0;
     }
 
-    private Card? CanPlayPlus()
+    protected Card? CanPlayPlus()
     {
-        Rank toFind = _game.Current.Rank == Rank.Plus2 ? Rank.Plus2 : Rank.Plus4;
-        foreach (Card card in _cards)
+        Rank toFind = Game.Current.Rank == Rank.Plus2 ? Rank.Plus2 : Rank.Plus4;
+        foreach (Card card in Cards)
         {
             if (card.Rank == toFind)
                 return card;
@@ -48,12 +48,12 @@ public class Player
         return null;
     }
 
-    private bool Draw(int n)
+    protected virtual bool Draw(int n)
     {
         int i = 0;
-        foreach (Card card in _game.Deck)
+        foreach (Card card in Game.Deck)
         {
-            _cards.Add(card);
+            Cards.Add(card);
             i++;
             if (i == n)
                 break;
@@ -61,35 +61,35 @@ public class Player
         return i == n;
     }
     
-    private bool CanPlay()
+    protected bool CanPlay()
     {
-        foreach (Card card in _cards)
+        foreach (Card card in Cards)
         {
-            if (card.Color == _game.Current.Color || card.Rank == _game.Current.Rank || card.Color == Color.Special)
+            if (card.Color == Game.Current.Color || card.Rank == Game.Current.Rank || card.Color == Color.Special)
                 return true;
         }
         return false;
     }
     
-    private int PlayCard()
+    protected virtual int PlayCard()
     {
         int i = 0;
         if (!CanPlay())
         {
-            foreach (Card card in _game.Deck)
+            foreach (Card card in Game.Deck)
             {
-                _cards.Add(card);
+                Cards.Add(card);
                 i++;
-                if (card.Color == _game.Current.Color || card.Rank == _game.Current.Rank || card.Color == Color.Special)
+                if (card.Color == Game.Current.Color || card.Rank == Game.Current.Rank || card.Color == Color.Special)
                     break;
             }
         }
         bool played = false;
-        foreach (Card card in _cards)
+        foreach (Card card in Cards)
         {
-            if (card.Color == _game.Current.Color)
+            if (card.Color == Game.Current.Color)
             {
-                _game.Current = card;
+                Game.Current = card;
                 played = true;
                 break;
             }
@@ -97,15 +97,15 @@ public class Player
 
         if (played)
         {
-            _cards.Remove(_game.Current);
+            Cards.Remove(Game.Current);
             return i;
         }
         
-        foreach (Card card in _cards)
+        foreach (Card card in Cards)
         {
-            if (card.Rank == _game.Current.Rank)
+            if (card.Rank == Game.Current.Rank)
             {
-                _game.Current = card;
+                Game.Current = card;
                 played = true;
                 break;
             }
@@ -113,52 +113,52 @@ public class Player
 
         if (played)
         {
-            _cards.Remove(_game.Current);
+            Cards.Remove(Game.Current);
             return i;
         }
 
-        Card c = _cards[0];
-        foreach (Card card in _cards)
+        Card c = Cards[0];
+        foreach (Card card in Cards)
         {
             if (card.Color == Color.Special)
             {
-                _game.Current = card;
+                Game.Current = card;
                 c = card;
                 played = true;
-                _game.Current.Color = MaxCol();
+                Game.Current.Color = MaxCol();
                 break;
             }
         }
         if (played)
         {
-            _cards.Remove(c);
+            Cards.Remove(c);
             return i;
         }
         return -1;
     }
 
-    private int PlusHandler()
+    protected virtual int PlusHandler()
     {
         Card? card = CanPlayPlus();
         if (card is not null)
         {
-            _game.Current = card;
-            _cards.Remove(card);
+            Game.Current = card;
+            Cards.Remove(card);
             return -1;
         }
-        if (!Draw(_game.NbOfPlus))
+        if (!Draw(Game.NbOfPlus))
             return -400;
-        _game.Eat(_game.NbOfPlus);
-        return _game.NbOfPlus;
+        Game.Eat(Game.NbOfPlus);
+        return Game.NbOfPlus;
     }
 
-    private Color MaxCol()
+    protected Color MaxCol()
     {
         int r = 0;
         int g = 0;
         int y = 0;
         int b = 0;
-        foreach (Card card in _cards)
+        foreach (Card card in Cards)
         {
             switch (card.Color)
             {
@@ -188,7 +188,7 @@ public class Player
     
     public int Play()
     {
-        switch (_game.Current.Rank)
+        switch (Game.Current.Rank)
         {
             case Rank.Plus2:
             case Rank.Plus4:
@@ -210,14 +210,14 @@ public class Player
     public override string ToString()
     {
         if (Won())
-            return _name + " won the game !";
-        return _name + " has " + _cards.Count + " cards in his hand.";
+            return Name + " won the game !";
+        return Name + " has " + Cards.Count + " cards in his hand.";
     }
 
     public string GetCards()
     {
         string cards = "\n";
-        foreach (Card card in _cards)
+        foreach (Card card in Cards)
         {
             cards += "\t- " + card + "\n";
         }
@@ -226,6 +226,6 @@ public class Player
 
     public string GetName()
     {
-        return _name;
+        return Name;
     }
 }

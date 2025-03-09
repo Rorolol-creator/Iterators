@@ -3,15 +3,15 @@ namespace Unix_Ref.Uno;
 public class Game
 {
     public Deck Deck { get; }
-    private List<Player> _players;
-    private Card _current;
-    public Card Current { get => _current; set => _current = value; }
+    public readonly List<Player> Players;
+    private Card? _current;
+    public virtual Card? Current { get => _current; set => _current = value; }
     public int NbOfPlus;
 
     public Game()
     {
         Deck = new Deck();
-        _players = new List<Player>();
+        Players = new List<Player>();
         NbOfPlus = 0;
         Deck.Shuffle();
     }
@@ -21,15 +21,15 @@ public class Game
         Deck.UpdateDeck(n);
     }
     
-    public void AddPlayer(string playerName)
+    public virtual void AddPlayer(string playerName)
     {
-        _players.Add(new Player(this, playerName));
+        Players.Add(new Player(this, playerName));
         Eat(7);
     }
 
-    private bool GameOver()
+    protected bool GameOver()
     {
-        foreach (Player player in _players)
+        foreach (Player player in Players)
         {
             if (player.Won())
                 return true;
@@ -40,50 +40,50 @@ public class Game
 
     private int FindBefore(Player who)
     {
-        for (int i = 0; i < _players.Count; i++)
+        for (int i = 0; i < Players.Count; i++)
         {
-            if (_players[i] == who)
-                return i == 0 ? _players.Count - 1 : i - 1;
+            if (Players[i] == who)
+                return i == 0 ? Players.Count - 1 : i - 1;
         }
         return -1;
     }
 
     private void RightRotate(int nb)
     {
-        int n = _players.Count;
+        int n = Players.Count;
         for (int i = 0; i < nb; i++) 
         {
-            Player p = _players[n - 1];
+            Player p = Players[n - 1];
             for (int j = n - 2; j >= 0; j--) 
-                _players[j + 1] = _players[j];
-            _players[0] = p;
+                Players[j + 1] = Players[j];
+            Players[0] = p;
         }
     }
 
     private void LeftRotate(int nb)
     {
-        int n = _players.Count;
+        int n = Players.Count;
         for (int i = 0; i < nb; i++) 
         {
-            Player p = _players[0];
+            Player p = Players[0];
             for (int j = 0; j < n - 1; j++) 
-                _players[j] = _players[j + 1];
-            _players[n - 1] = p;
+                Players[j] = Players[j + 1];
+            Players[n - 1] = p;
         }
     }
 
     private void Reverse()
     {
-        for (int i = 0; i < _players.Count / 2; i++)
+        for (int i = 0; i < Players.Count / 2; i++)
         {
-            (_players[i], _players[_players.Count - i - 1]) = (_players[_players.Count - i - 1], _players[i]);
+            (Players[i], Players[Players.Count - i - 1]) = (Players[Players.Count - i - 1], Players[i]);
         }
     }
 
-    private void ReverseList(Player who)
+    protected void ReverseList(Player who)
     {
         int first = FindBefore(who);
-        int n = _players.Count;
+        int n = Players.Count;
         if (first > n / 2)
             RightRotate(n - first);
         else
@@ -91,7 +91,7 @@ public class Game
         Reverse();
     }
     
-    public void Play()
+    public virtual void Play()
     {
         int n;
         Card? c = Deck.GetFirst();
@@ -101,7 +101,7 @@ public class Game
         Player? p = null;
         while (!GameOver())
         {
-            foreach (Player player in _players)
+            foreach (Player player in Players)
             {
                 Console.Write("current card = " + Current + "  \t");
                 n = player.Play();
@@ -144,7 +144,7 @@ public class Game
         }
 
         bool finished = false;
-        foreach (Player player in _players)
+        foreach (Player player in Players)
         {
             Console.WriteLine(player);
             if (player.Won())
